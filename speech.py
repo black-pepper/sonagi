@@ -37,7 +37,7 @@ def Voice_Recogition():
 while True:
     text = Voice_Recogition()
 
-    if "인식 테스트" in text:
+    if "테스트" in text:
         Pass_Data()
         pass
 

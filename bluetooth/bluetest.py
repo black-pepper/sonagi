@@ -27,9 +27,8 @@ def main():
     buff_msg = b''
     while True:
         get = blue_comm.read_comm()
-        temp = 'abs'.encode('utf-8')
-        print(type(temp))
-        blue_comm.send_comm(temp)
+        blue_comm.send_comm('100000')
+        blue_comm.send_comm(get)
         print(get)
         '''
         if get != b'\r':
