@@ -20,10 +20,10 @@ while check == 0:
 
 time.sleep(2)
 check = 0
-    while check == 0:
-        try:
-            f = open('recognition.txt', 'r')
-            line = int(f.readline())
+while check == 0:
+    try:
+        f = open('recognition.txt', 'r')
+        line = int(f.readline())
             # print(line)
             f.close()
 

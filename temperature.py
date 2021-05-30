@@ -1,10 +1,8 @@
-#!/usr/bin/python
-# Copyright (c) 2014 Adafruit Industries
-# Author: Tony DiCola
-
 import sys
-import Adafruit_DHT
+import time
 from collections import deque
+from mpu9250_jmdev.registers import *
+from mpu9250_jmdev.mpu_9250 import MPU9250
 
 def Pass_Data():
     check = 0
@@ -26,33 +24,35 @@ def Pass_Data():
         except:
             continue
 
-sensor_args = { '11': Adafruit_DHT.DHT11,
-                '22': Adafruit_DHT.DHT22,
-                '2302': Adafruit_DHT.AM2302 }
-
 def init():
     temper = deque()
     while len(temper)<60:
-        humidity, temperature = Adafruit_DHT.read_retry(sensor, pin)
-        if humidity is not None and temperature is not None:
-            temper.append(int(temperature))
-            total_sum += int(temperature)
+        temperature = mpu.readTemperatureMaster()
+        temper.append(int(temperature))
+        total_sum += int(temperature)
 
-sensor = 11
-pin = 2
-temper = deque()
-total_sum = 0
+mpu = MPU9250(
+    address_ak=AK8963_ADDRESS, 
+    address_mpu_master=MPU9050_ADDRESS_68, # In 0x68 Address
+    address_mpu_slave=None, 
+    bus=1,
+    gfs=GFS_1000, 
+    afs=AFS_8G, 
+    mfs=AK8963_BIT_16, 
+    mode=AK8963_MODE_C100HZ)
+
+mpu.configure()
 
 init()
 while True:
-    humidity, temperature = Adafruit_DHT.read_retry(sensor, pin)
-    if humidity is not None and temperature is not None:
-        temper.append(int(temperature))
-        total_sum += int(temperature)
-        total_sum -= temper.popleft()
-        if total_sum/60 > 35:
-            Pass_Data()
-            init()
+    temperature = mpu.readTemperatureMaster()
+    temper.append(int(temperature))
+    total_sum += int(temperature)
+    total_sum -= temper.popleft()
+    if total_sum/60 > 35:
+        Pass_Data()
+        init()
+    time.sleep(1)
         #print('Temp={0:0.1f}*  Humidity={1:0.1f}%'.format(temperature, humidity))
         #print('temperature: ' + str(temperature))
         #print('humidity: ' + str(humidity))
