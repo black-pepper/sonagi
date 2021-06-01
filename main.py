@@ -1,5 +1,7 @@
 import bluetooth
 import subprocess
+from datetime import datetime
+
 class BluetoothComm:
     def __init__(self):
         self.server_socket=bluetooth.BluetoothSocket( bluetooth.RFCOMM )
@@ -18,13 +20,27 @@ class BluetoothComm:
  
     def send_comm(self, text):
         self.client_socket.sendall(text)
+        
+def blue_value():
+    f = open('value.txt', 'r')
+        value = int(f.readline())
+        f.close()
+    blue_comm.send_comm(value)
+    blue_comm.send_comm(get)
+    
        
 blue_comm = BluetoothComm()
 get = blue_comm.read_comm()
 
 check = 0
+start_time = datetime.now()
+
 while True:
     try:
+        if (datetime.now() - start).seconds > 60:
+            blue_value()
+            start_time = datetime.now()
+        
         f = open('recognition.txt', 'r')
         line = int(f.readline())
         f.close()
